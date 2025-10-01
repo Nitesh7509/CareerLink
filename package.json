@@ -1,0 +1,26 @@
+{
+  "name": "careerlink",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nitesh7509/CareerLink.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Nitesh7509/CareerLink/issues"
+  },
+  "homepage": "https://github.com/Nitesh7509/CareerLink#readme",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "moongose": "^1.0.0",
+    "morgan": "^1.10.1"
+  }
+}
