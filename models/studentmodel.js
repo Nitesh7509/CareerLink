@@ -1,23 +1,37 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
+const bcrypt = require('bcrypt');
 
 const studentSchema = new mongoose.Schema({
     email: {
-        Type: String,
+        type: String,
+        required: [true, "email is require"],
+        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address'],
         unique: true,
-        require: [true, "email is require"],
-        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
-
     },
     password: {
-        Type: String,
+        type: String,
         select: false,
-        require: [true, "email is require"],
-        match: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/, 'Password One capital letter One special word']
-        maxLenght:[15,"maximun lenght is 15"],
-        minLenght:[6,"minimum lenght is 6"]
+        required: [true, "email is require"],
+        // match: [/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/, 'Password One capital letter One special word'],
+        maxLenght: [15, "maximun lenght is 15"],
+        minLenght: [6, "minimum lenght is 6"]
     }
 }, { timestamps: true })
 
+studentSchema.pre("save",function(){
+    if(!this.isModified("password")){
+        return;
+    }
+let salt = bcrypt.genSaltSync(10);
+this.password =bcrypt.hashSync(this.password,salt);
 
-const student = mongoose.model( "student",studentSchema);
-module.exports=student
+
+});
+
+studentSchema.methods.matchpassword= function(password){
+  return bcrypt.compareSync(password,this.password)
+}
+
+
+const student = mongoose.model("student", studentSchema);
+module.exports = student

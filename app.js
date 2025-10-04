@@ -4,17 +4,19 @@ const app = express();
 const errorhandler = require("./utils/errorhandler");
 const { generatedError } = require("./middlewares/error");
 
+const connectDb = require('./database/database')
+connectDb()
 
 const logger = require("morgan");
 app.use(logger("tiny"));
 
-const connectDb = require('./database/database')
-connectDb()
+app.use(express.json());
+app.use(express.urlencoded({extended:false}));
 
 
 //routes
 
-app.get("/", require("./routes/indexroutes"))
+app.use("/", require("./routes/indexroutes"))
 
 
 
