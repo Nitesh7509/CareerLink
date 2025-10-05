@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require('bcrypt');
+const jwt =require("jsonwebtoken")
 
 const studentSchema = new mongoose.Schema({
     email: {
@@ -30,6 +31,10 @@ this.password =bcrypt.hashSync(this.password,salt);
 
 studentSchema.methods.matchpassword= function(password){
   return bcrypt.compareSync(password,this.password)
+}
+
+studentSchema.methods.jwtwebtoken = function(){
+    return jwt.sign({id:this._id},process.env.WEBTOKEN_SECRET,{expiresIn:process.env.EXPIRE_TIME})
 }
 
 
