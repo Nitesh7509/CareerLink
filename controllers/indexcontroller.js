@@ -4,8 +4,14 @@ const errorhandler = require("../utils/errorhandler");
 const { sendtoken } = require("../utils/sendtoken");
 
 exports.homepage = catchAsync(async (req, res, next) => {
-  console.log("heelo");
+  
   res.json({ message: "heelo" });
+});
+
+exports.profilepage = catchAsync(async (req, res, next) => {
+  const student= await students.findById(req.id);
+  res.json(student)
+  
 });
 
 exports.StudentSignUp = catchAsync(async (req, res, next) => {
@@ -28,4 +34,9 @@ exports.StudentSignIn = catchAsync(async (req, res, next) => {
 exports.StudentSignOut = catchAsync(async (req, res, next) => {
   res.clearCookie("token");
   res.json({ message: "you`re  now signout" });
+});
+
+exports.forgetpassowrd= catchAsync(async (req, res, next) => {
+  
+  res.json({ message: "heelo" });
 });
