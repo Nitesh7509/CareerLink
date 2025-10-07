@@ -5,24 +5,18 @@ const { forgetpasswordlink } = require("../utils/nodemailer");
 const { sendtoken } = require("../utils/sendtoken");
 
 exports.homepage = catchAsync(async (req, res, next) => {
-  
   res.json({ message: "heelo" });
 });
 
 exports.profilepage = catchAsync(async (req, res, next) => {
-  const student= await students.findById(req.id);
-  res.json(student)
-  
+  const student = await students.findById(req.id);
+  res.json(student);
 });
-
-
 
 exports.StudentSignUp = catchAsync(async (req, res, next) => {
   const student = await new students(req.body).save();
   sendtoken(student, 201, res);
 });
-
-
 
 exports.StudentSignIn = catchAsync(async (req, res, next) => {
   const student = await students
@@ -36,38 +30,42 @@ exports.StudentSignIn = catchAsync(async (req, res, next) => {
   sendtoken(student, 200, res);
 });
 
-
 exports.StudentSignOut = catchAsync(async (req, res, next) => {
   res.clearCookie("token");
   res.json({ message: "you`re  now signout" });
 });
 
+exports.forgetpassowrd = catchAsync(async (req, res, next) => {
+  const student = await students.findOne({ email: req.body.email }).exec();
 
+  if (!student) return next(new errorhandler(" user not found ", 404));
 
-exports.forgetpassowrd= catchAsync(async (req, res, next) => {
-  const student = await students.findOne({email:req.body.email}).exec();
-
-  if(!student) return next(new errorhandler(" user not found ",404))
-
-    const link = `${req.protocol}/${req.get("host")}/student/forgetpassword/${student._id}`
-    forgetpasswordlink(req,res,next,link)
-    student.
-  
-  res.json({student,link});
+  const link = `${req.protocol}/${req.get("host")}/student/forgetpassword/${
+    student._id
+  }`;
+ 
+  forgetpasswordlink(req, res, next, link);
+    student.linkexpiretoken = "1";
+    await  student.save()
+  res.json({ student, link });
 });
 
-
-
-exports.forgetpassowrdlink= catchAsync(async (req, res, next) => {
+exports.forgetpassowrdlink = catchAsync(async (req, res, next) => {
   const student = await students.findById(req.params.id).exec();
 
-  if(!student) return next(new errorhandler(" user not found ",404))
+  if (!student) return next(new errorhandler(" user not found ", 404));
+  if (student.linkexpiretoken == "1") {
+    student.linkexpiretoken = "0";
+    student.password = req.body.password;
+    await student.save();
 
-   student.password=req.body.password;
-   await student.save()
+   
+  } else {
+   return next(new errorhandler(" link expired ", 500));
+  }
    res.status(200).json({
-    message:"password change sucessfully"
-   })
-  
-  
+    message: "password change sucessfully",
+  });
+
+
 });
