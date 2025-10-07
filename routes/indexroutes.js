@@ -1,5 +1,5 @@
 const express = require("express");
-const { homepage, StudentSignUp, StudentSignIn, StudentSignOut, profilepage, forgetpassowrd } = require("../controllers/indexcontroller");
+const { homepage, StudentSignUp, StudentSignIn, StudentSignOut, profilepage, forgetpassowrd, forgetpassowrdlink } = require("../controllers/indexcontroller");
 const { isAuthintication } = require("../middlewares/auth");
 const router = express.Router();
 
@@ -21,6 +21,9 @@ router.post("/student/signout",isAuthintication,StudentSignOut);
 
 
 
-router.post("/student/forwardpassword",forgetpassowrd);
+router.get("/student/forgetpassword",forgetpassowrd);
+
+
+router.post("/student/forgetpassword/:id",forgetpassowrdlink);
 
 module.exports = router;
