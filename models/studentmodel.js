@@ -4,9 +4,34 @@ const jwt = require("jsonwebtoken");
 
 const studentSchema = new mongoose.Schema(
   {
+    firstname: {
+      type: String,
+      required: [true, "firstname is required"],
+      minlength: [4, "minimum length is 4"],
+    },
+    lastname: {
+      type: String,
+      required: [true, "lastname is required"],
+      minlength: [4, "minimum length is 4"],
+    },
+contact: {
+  type: String,
+  required: [true, "contact is required"],
+  minlength: [10, "Contact number must be 10 digits"],
+  maxlength: [10, "Contact number must be 10 digits"],
+},
+    gender: {
+      type: String,
+      required: true,
+      enum: ["male", "female", "other"],
+    },
+    city: {
+      type: String,
+      required: [true, "city is required"],
+    },
     email: {
       type: String,
-      required: [true, "email is require"],
+      required: [true, "email is required"],
       match: [
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
         "Please fill a valid email address",
@@ -16,10 +41,10 @@ const studentSchema = new mongoose.Schema(
     password: {
       type: String,
       select: false,
-      required: [true, "email is require"],
-      // match: [/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/, 'Password One capital letter One special word'],
-      maxLenght: [15, "maximun lenght is 15"],
-      minLenght: [6, "minimum lenght is 6"],
+      required: [true, "password is required"],
+      // match: [/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/, 'Password must contain one capital letter, one number, and special character'],
+      maxlength: [15, "maximum length is 15"],
+      minlength: [4, "minimum length is 4"],
     },
     linkexpiretoken: {
       type: String,

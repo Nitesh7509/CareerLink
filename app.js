@@ -8,6 +8,7 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 
 const connectDb = require("./database/database");
+const fileUpload = require("express-fileupload");
 connectDb();
 
 app.use(logger("tiny"));
@@ -21,6 +22,8 @@ app.use(
   })
 );
 app.use(cookieParser());
+const fileupload=require("express-fileupload");
+app.use(fileupload());
 
 //routes
 
