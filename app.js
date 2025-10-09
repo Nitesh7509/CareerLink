@@ -28,6 +28,7 @@ app.use(fileupload());
 //routes
 
 app.use("/", require("./routes/indexroutes"));
+app.use("/resume", require("./routes/resumeroutes"));
 
 app.all("*name", (req, res, next) => {
   next(new errorhandler(`page not found ${req.url}`, 404));

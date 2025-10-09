@@ -3,6 +3,8 @@ const students = require("../models/studentmodel");
 const errorhandler = require("../utils/errorhandler");
 const { forgetpasswordlink } = require("../utils/nodemailer");
 const { sendtoken } = require("../utils/sendtoken");
+const path = require("path");
+const imagekit = require("../utils/imagekit").ImageKit();
 
 exports.homepage = catchAsync(async (req, res, next) => {
   res.json({ message: "heelo" });
@@ -16,10 +18,10 @@ exports.StudentSignUp = catchAsync(async (req, res, next) => {
 
 exports.StudentSignIn = catchAsync(async (req, res, next) => {
   const student = await students
-  .findOne({ email: req.body.email })
-  .select("+password")
-  .exec();
-  
+    .findOne({ email: req.body.email })
+    .select("+password")
+    .exec();
+
   if (!student) return next(new errorhandler("user not found", 404));
   const isMatched = student.matchpassword(req.body.password);
   if (!isMatched) return next(new errorhandler("password is wrong", 402));
@@ -33,21 +35,34 @@ exports.profilepage = catchAsync(async (req, res, next) => {
 
 
 exports.profileUpdate = catchAsync(async (req, res, next) => {
-   const student = await students.findByIdAndUpdate(req.id ,req.body).exec();
-     if (!student) return next(new errorhandler(err, 404));
-   res.status(201).json({
-      message:"user profile  update sucessfully"
+  const student = await students.findByIdAndUpdate(req.id, req.body).exec();
+  if (!student) return next(new errorhandler(err, 404));
+  res.status(201).json({
+    message: "user profile  update sucessfully"
 
-   })
+  })
 });
 exports.profileavatar = catchAsync(async (req, res, next) => {
-    const files =req.files
-   res.status(201).json({
-      message:"user profile  update sucessfully",
-      files
+  const student = await students.findById(req.id).exec();
+  const files = req.files.avatar;
+  const Modifiedfilename = `resume- ${Date.now()} ${path.extname(files.name)}`;
+ 
+ if(student.avatar.fileId !==""){
+   await imagekit.deleteFile(student.avatar.fileId);
+
+ };
+ 
+  const {fileId,url} = await imagekit.upload({
+    file:files.data,
+    fileName:Modifiedfilename,
+  });
 
 
-   })
+  student.avatar ={fileId,url}
+   await student.save()
+  res.status(201).json({
+      message:"profile image upload successfully"
+  });
 });
 
 exports.StudentSignOut = catchAsync(async (req, res, next) => {
@@ -60,13 +75,12 @@ exports.forgetpassowrd = catchAsync(async (req, res, next) => {
 
   if (!student) return next(new errorhandler(" user not found ", 404));
 
-  const passwordlink = `${req.protocol}/${req.get("host")}/student/forgetpassword/${
-    student._id
-  }`;
- 
+  const passwordlink = `${req.protocol}/${req.get("host")}/student/forgetpassword/${student._id
+    }`;
+
   forgetpasswordlink(req, res, next, passwordlink);
-    student.linkexpiretoken = "1";
-    await  student.save()
+  student.linkexpiretoken = "1";
+  await student.save()
   res.json({ student, passwordlink });
 });
 
@@ -79,11 +93,11 @@ exports.forgetpassowrdlink = catchAsync(async (req, res, next) => {
     student.password = req.body.password;
     await student.save();
 
-   
+
   } else {
-   return next(new errorhandler(" passwordlink expired ", 500));
+    return next(new errorhandler(" passwordlink expired ", 500));
   }
-   res.status(200).json({
+  res.status(200).json({
     message: "password change sucessfully",
   });
 

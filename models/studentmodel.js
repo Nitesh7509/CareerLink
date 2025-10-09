@@ -50,6 +50,23 @@ contact: {
       type: String,
       default: "0",
     },
+    avatar:{
+      type:Object,
+      default:{
+        fileId:"",
+        url:"https://i.pinimg.com/736x/c3/76/13/c37613cb20f7d18e4497439318e3694d.jpg"
+      }
+    },
+    resume:{
+      education:[],
+      jobs:[],
+      internships:[],
+      responsibilities:[],
+      courses:[],
+      project:[],
+      skills:[],
+      accomplishments:[],
+    }
   },
   { timestamps: true }
 );
